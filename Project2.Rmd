@@ -37,224 +37,207 @@ zarazonych wirusem w poszczególnych województwach jest proporcjonalna do popul
 
 ```{r, fig.width=12,fig.height=8}
 #zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-df_pzu <- read.csv('data/end_of_day_PZU.csv')
-names(df_pzu) <- c('ticker', 'date', 'open', 'high', 'low', 'close', 'vol')
-df_pzu$date <- as.Date.character(df_pzu$date, format = '%Y%m%d')
-df_pzu$open_ch <- with(df_pzu, c(NA, 100 * diff(open)/open[1:length(open) -1]))
-df_pzu <- df_pzu[with(df_pzu, order(date)), ]
-
-ggplot(data=df_pzu, aes(x = date, y = open_ch)) +
-  geom_line(color = "blue", size = 1) +
-  labs(title = "Zmiana kursu otwarcia PZU", x = "Data", y = "Zmiana[%]") +
-  scale_x_date(date_breaks = "months" , date_labels = "%b-%Y") +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16),
-    axis.text.x=element_text(angle = 90)
-  )
+# df_pzu <- read.csv('data/end_of_day_PZU.csv')
+# names(df_pzu) <- c('ticker', 'date', 'open', 'high', 'low', 'close', 'vol')
+# df_pzu$date <- as.Date.character(df_pzu$date, format = '%Y%m%d')
+# df_pzu$open_ch <- with(df_pzu, c(NA, 100 * diff(open)/open[1:length(open) -1]))
+# df_pzu <- df_pzu[with(df_pzu, order(date)), ]
+# 
+# ggplot(data=df_pzu, aes(x = date, y = open_ch)) +
+#   geom_line(color = "blue", size = 1) +
+#   labs(title = "Zmiana kursu otwarcia PZU", x = "Data", y = "Zmiana[%]") +
+#   scale_x_date(date_breaks = "months" , date_labels = "%b-%Y") +
+#   theme(
+#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
+#     axis.title=element_text(size=18),
+#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
+#     axis.text=element_text(size=16),
+#     axis.text.x=element_text(angle = 90)
+#   )
 
 ```
 
 ```{r, fig.width=12,fig.height=8}
 #zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-df_lccorp <- read.csv('data/end_of_day_LCCORP.csv')
-names(df_lccorp) <- c('ticker', 'date', 'open', 'high', 'low', 'close', 'vol')
-df_lccorp$date <- as.Date.character(df_lccorp$date, format = '%Y%m%d')
-df_lccorp$open_ch <- with(df_lccorp, c(NA, 100 * diff(open)/open[1:length(open) -1]))
-df_lccorp <- df_lccorp[with(df_lccorp, order(date)), ]
-
-ggplot(data=df_lccorp, aes(x = date, y = open_ch)) +
-  geom_line(color = "blue", size = 1) +
-  labs(title = "Zmiana kursu otwarcia LCCORP (DVL)", x = "Data", y = "Zmiana[%]") +
-  scale_x_date(date_breaks = "months" , date_labels = "%b-%Y") +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16),
-    axis.text.x=element_text(angle = 90)
-  )
+# df_lccorp <- read.csv('data/end_of_day_LCCORP.csv')
+# names(df_lccorp) <- c('ticker', 'date', 'open', 'high', 'low', 'close', 'vol')
+# df_lccorp$date <- as.Date.character(df_lccorp$date, format = '%Y%m%d')
+# df_lccorp$open_ch <- with(df_lccorp, c(NA, 100 * diff(open)/open[1:length(open) -1]))
+# df_lccorp <- df_lccorp[with(df_lccorp, order(date)), ]
+# 
+# ggplot(data=df_lccorp, aes(x = date, y = open_ch)) +
+#   geom_line(color = "blue", size = 1) +
+#   labs(title = "Zmiana kursu otwarcia LCCORP (DVL)", x = "Data", y = "Zmiana[%]") +
+#   scale_x_date(date_breaks = "months" , date_labels = "%b-%Y") +
+#   theme(
+#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
+#     axis.title=element_text(size=18),
+#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
+#     axis.text=element_text(size=16),
+#     axis.text.x=element_text(angle = 90)
+#   )
 ```
 
 <b>b) Sprawdz, czy skutecznosc leczenia osób zarazonych wirusem SARS-CoV-2 jest taka sama na terenie całej
 Polski, tzn. czy liczba przypadków smiertelnych jest proporcjonalna do liczby osób zarazonych przy podziale
 na województwa.</b>
 ```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-ggplot(data=df_pzu, aes(x = open_ch)) +
-  geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
-  labs(title = "Histogram zmian kursu PZU", x = "Zmiana[%]", y = "Częstość występowania") +
-  scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
-
-ggplot(data=df_pzu, aes(y = open_ch)) +
-  geom_boxplot(color = "black", fill = "green", outlier.colour="red", outlier.shape=8, outlier.size=4) +
-  labs(title = "Wykres pudełkowy zmian kursu PZU", x = "", y = "Zmiana[%]") +
-  scale_y_continuous(breaks = seq(-20, 15, by = 5)) +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
+# #zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
+# ggplot(data=df_pzu, aes(x = open_ch)) +
+#   geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
+#   labs(title = "Histogram zmian kursu PZU", x = "Zmiana[%]", y = "Częstość występowania") +
+#   scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
+#   theme(
+#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
+#     axis.title=element_text(size=18),
+#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
+#     axis.text=element_text(size=16)
+#   )
+# 
+# ggplot(data=df_pzu, aes(y = open_ch)) +
+#   geom_boxplot(color = "black", fill = "green", outlier.colour="red", outlier.shape=8, outlier.size=4) +
+#   labs(title = "Wykres pudełkowy zmian kursu PZU", x = "", y = "Zmiana[%]") +
+#   scale_y_continuous(breaks = seq(-20, 15, by = 5)) +
+#   theme(
+#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
+#     axis.title=element_text(size=18),
+#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
+#     axis.text=element_text(size=16)
+#   )
 ```
 
 ```{r, fig.width=10,fig.height=10, warning=FALSE}
 #zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-ggplot(data=df_lccorp, aes(x = open_ch)) +
-  geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
-  labs(title = "Histogram zmian kursu LCCORP (DVL)", x = "Zmiana[%]", y = "Częstość występowania") +
-  scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
-
-ggplot(data=df_lccorp, aes(y = open_ch)) +
-  geom_boxplot(color = "black", fill = "green", outlier.colour="red", outlier.shape=8, outlier.size=4) +
-  labs(title = "Wykres pudełkowy zmian kursu LCCORP (DVL)", x = "", y = "Zmiana[%]") +
-  scale_y_continuous(breaks = seq(-20, 15, by = 5)) +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
+# ggplot(data=df_lccorp, aes(x = open_ch)) +
+#   geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
+#   labs(title = "Histogram zmian kursu LCCORP (DVL)", x = "Zmiana[%]", y = "Częstość występowania") +
+#   scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
+#   theme(
+#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
+#     axis.title=element_text(size=18),
+#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
+#     axis.text=element_text(size=16)
+#   )
+# 
+# ggplot(data=df_lccorp, aes(y = open_ch)) +
+#   geom_boxplot(color = "black", fill = "green", outlier.colour="red", outlier.shape=8, outlier.size=4) +
+#   labs(title = "Wykres pudełkowy zmian kursu LCCORP (DVL)", x = "", y = "Zmiana[%]") +
+#   scale_y_continuous(breaks = seq(-20, 15, by = 5)) +
+#   theme(
+#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
+#     axis.title=element_text(size=18),
+#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
+#     axis.text=element_text(size=16)
+#   )
 ```
 
 <b>2. Sprawdz teze mówiaca o tym, ze tzw. atut własnego boiska w ligowym meczu piłkarskim
 nie zalezy od kraju, w którym tocza sie dane rozgrywki ligowe. W tym celu, zweryfikuj hipoteze o niezaleznosci
 wyniku meczu, rozumianego jako zwyciestwo, porazke lub remis gospodarzy, od kraju rozgrywek.
+
 W ramach rozwiazania zadania zaimplementuj odpowiednie dla testu niezaleznosci wyrazenia, na podstawie
-których obliczane sa: statystyka testowa, wartosc krytyczna oraz p-wartosc. Przeprowadz wnioskowanie porównujac
-wartosc otrzymanej statystyki testowej z wartoscia krytyczna, przy poziomie istotnosci 0, 05. Czy obliczona
-p-wartosc potwierdza wynik wnioskowania? Sprawdz uzyskane wyniki wykorzystujac funkcje chisq.test.</b>
+których obliczane sa: statystyka testowa, wartosc krytyczna oraz p-wartosc.
+
+Przeprowadz wnioskowanie porównujac wartosc otrzymanej statystyki testowej z wartoscia krytyczna, przy poziomie istotnosci 0, 05.
+Czy obliczona p-wartosc potwierdza wynik wnioskowania?
+Sprawdz uzyskane wyniki wykorzystujac funkcje chisq.test.</b>
+
+Hipoteza zerowa $$H0:\ _"Atut\ własnego\ boiska\ jest\ niezależny\ od\ ligi\ rozgrywkowej."$$
+Hipoteza alternatywna $$H1:\ _"Atut\ własnego\ boiska\ jest\ zależny\ od\ ligi\ rozgrywkowej."$$
+
+Hipoteza będzie sprawdzana testem $\chi^{2}$.
+
+Dane zostały zebrane z strony https://pl.fcstats.com.
+
+Wczytanie danych:
+
+```{r}
+fc_data <- data.frame(Name = c("Primeria_Liga", "Ekstrakalasa", "Primera_Division", "Premier_League"),
+                 Win= c(104, 108,194,109),
+                 Draw=c(68, 65, 95,69),
+                 Lost=c(68,67,91,62))
+fc_data
+```
+
+Wykresy obrazujące wygrane, remisy i porażki gospodarzy w poszczególnych ligach:
 
 ```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-pzu_mean <- mean(df_pzu$open_ch, na.rm = T)
-pzu_sd <- sd(df_pzu$open_ch, na.rm = T)
-ggplot(data=df_pzu, aes(x = open_ch)) +
-  geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
-  stat_function(fun = dnorm, args = list(mean = pzu_mean, sd = pzu_sd), color = "red", size = 1) +
-  labs(title = "Histogram zmian kursu PZU", x = "Zmiana[%]", y = "Częstość występowania") +
-  scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
+library(ggplot2)
+
+ggplot(data=fc_data, aes(x=Name,y= Win)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Number of hosts winning matches in leagues") +
+  xlab("Legue name") +
+  ylab("Host winning matches") +
+  ylim(0, 200)
+
+ggplot(data=fc_data, aes(x=Name,y= Draw)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Number of draw matches in leagues") +
+  xlab("Legue name") +
+  ylab("Draw matches")+
+  ylim(0, 200)
+
+ggplot(data=fc_data, aes(x=Name,y= Lost)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Number of hosts lost matches in leagues") +
+  xlab("Legue name") +
+  ylab("Lost matches") +
+  ylim(0, 200)
   
 ```
 
-```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-lccorp_mean <- mean(df_lccorp$open_ch, na.rm = T)
-lccorp_sd <- sd(df_lccorp$open_ch, na.rm = T)
-ggplot(data=df_lccorp, aes(x = open_ch)) +
-  geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
-  stat_function(fun = dnorm, args = list(mean = lccorp_mean, sd = lccorp_sd), color = "red", size = 1) +
-  labs(title = "Histogram zmian kursu LCCORP (DVL)", x = "Zmiana[%]", y = "Częstość występowania") +
-  scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
+Wartość krytyczna $c$ będzie wyznaczana następującym wzorem:
+$$ c = F^{-1}_{\chi^{2}_{(n-1)(m-1)}}(1-\alpha)$$
+Gdzie $n$, $m$ oznacza liczbę stopni swobody kolejno w wierszach i kolumnach.
+Poziom istotności wynosi: $\alpha = 0.05$
+
+Dla danych danych liczba stopni swobody wyniosi 6:
+```{r}
+chi_freedom_degrees <- (dim(fc_data[,2:4])[1] - 1)*(dim(fc_data[,2:4])[2] - 1)
+chi_freedom_degrees
 ```
 
-```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-df_lpp <- read.csv('data/intra_LPP.csv')
-names(df_lpp) <- c('ticker','per','date','time','open','high','low','close','vol','oi')
-df_lpp$date <- paste(substr(df_lpp$date,0,4), substr(df_lpp$date,5,6), substr(df_lpp$date,7,8), sep="-")
-df_lpp$date <- as.POSIXct(df_lpp$date)
-df_lpp$time <- paste(floor(df_lpp$time / 10000), floor((df_lpp$time %% 10000) / 100), df_lpp$time %% 100, sep=":")
-df_lpp$time <- as.POSIXct(df_lpp$time, format = '%H:%M:%S')
-df_lpp <- df_lpp[c('ticker', 'date', 'time', 'open','high','low','close','vol')]
+Wartość krytyczna natomiast:
+```{r}
+alpha <- 0.05
+c <- qchisq(p=alpha, df=chi_freedom_degrees, lower.tail=FALSE)
+```
+$$ c = F^{-1}_{\chi^{2}_{6}}(1-0,05) = `r c` $$
+Następnie obliczam wartość $\chi^{2}$:
+```{r}
+col_sum <- matrix(colSums(fc_data[,2:4]))
+row_sum <- matrix(rowSums(fc_data[,2:4]))
 
-ggplot(data=df_lpp, aes(x = time)) +
-  geom_histogram(aes(y = stat(count / sum(count))), binwidth = 600, color = "black", fill = "blue") +
-  labs(title = "Histogram liczby transakcji LPP", x = "Godzina", y = "Częstość występowania") +
-  scale_x_datetime(breaks = "30 mins", date_labels = "%H:%M") +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16),
-    axis.text.x=element_text(angle = 90)
-  )
+stat <- row_sum %*% t(col_sum)/sum(row_sum)
+
+chisq <- sum((stat - fc_data[,2:4]) * (stat - fc_data[,2:4])/stat)
+```
+Wartość $\chi^{2}$ jest równa:
+$$\chi^{2} = `r chisq`$$
+
+Jest ona mniejsza niż wartość krytyczna, nie można więc odrzucić hipotezy zerowej.
+
+Wyliczam p-wartość:
+```{r}
+p_val <- pchisq(chisq, df=chi_freedom_degrees, lower.tail=FALSE)
 ```
 
-```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-myBreaks <- c(
-  as.POSIXct('00:00', format = '%H:%M'),
-  as.POSIXct('09:00', format = '%H:%M'),
-  as.POSIXct('16:50', format = '%H:%M'),
-  as.POSIXct('23:59', format = '%H:%M'))
+P-wartość wynosi:
+$$p = `r p_val`$$
 
-ggplot(data=df_lpp, aes(x = time)) +
-  geom_histogram(aes(y = stat(count / sum(count))), color = "black", fill = "blue", breaks = myBreaks) +
-  labs(title = "Histogram liczby transakcji LPP", x = "Godzina", y = "Częstość występowania") +
-  scale_x_datetime(breaks = myBreaks, date_labels = "%H:%M") +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
+Jest ona większa niż poziom istotności $\alpha = 0.05$. Potwierdza to, że nie można odrzucić hipotezy zerowej.
+
+Uzyskane wyniki zostają sprawdzone z funkcją $chisq.test$.
+```{r}
+chisq_test <- chisq.test(fc_data[2:4])
+chisq_test
 ```
 
-```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-start <- strptime('12:00', format = '%H:%M')
-end <- strptime('14:00', format = '%H:%M')
-interval <- 60 # seconds
-df_lpp2h <- df_lpp[df_lpp$date == strptime('2020-09-02', format = '%Y-%m-%d'), ]
-df_lpp2h <- df_lpp2h[df_lpp2h$time >= start & df_lpp2h$time < end, ]
-
-pop <- data.frame(seq(from=start, to=end, by=interval))
-names(pop) <- c('date')
-pop$count <- apply(pop, 1, function (x) nrow(df_lpp2h[df_lpp2h$time >= x & df_lpp2h$time - interval < x, ]))
-count_mean <- mean(pop$count)
-arg <- 0:max(pop$count)
-freq <- as.numeric(table(factor(pop$count, levels = arg))) / length(pop$count)
-
-df <- data.frame(arg, freq)
-dp <- dpois(arg, lambda = count_mean)
-points <- data.frame(arg, dp)
-
-ggplot(data = df, aes(x = arg, y = freq)) +
-  geom_bar(stat="identity", width = 0.05, fill = "blue", size = 1) +
-  geom_point(data = points, mapping = aes(x = arg, y = dp), color = "red", size = 3, shape = 4, stroke = 2) +
-  labs(title = "Prawdopodobieństwo wystąpienia n transakcji", x = "n", y = "f(n)") +
-  theme(
-    plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-    axis.title=element_text(size=18),
-    axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-    axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-    axis.text=element_text(size=16)
-  )
-```
+Takie same wyniki potwierdzają poprawność obliczeń.
