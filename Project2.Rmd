@@ -1,5 +1,5 @@
 ---
-title: "Project 2"
+title: "Projekt 2"
 author: "Młyniec Paweł, Artur Godlewski"
 date: "11/01/2021"
 output: html_document
@@ -23,11 +23,14 @@ Do zadania 1 przydzielonymi naszemu zespołowi są ligi: Primeira Liga (Liga por
 
 ```{r}
 library(ggplot2, scales)
-Sys.setenv(LANGUAGE="pl")
-x <- Sys.setlocale("LC_TIME", "Polish")
+library(reshape)
+options(warn=-1)
 ```
 
 <b>Zadanie 1.</b> Korzystajac z danych dostepnych w internecie:
+```{r}
+z1Data = read.csv("data/z1Data.csv");
+```
 
 <b>c) W kazdym z poniższych przypadków wskaz ewentualnie, które województwa istotnie sie od siebie róznia
 pod katem rozwazanych statystyk.</b>
@@ -35,108 +38,142 @@ pod katem rozwazanych statystyk.</b>
 <b>a) Sprawdz, czy wirus SARS-CoV-2 równomiernie rozprzestrzenił sie na terenie Polski, tzn. czy liczba osób
 zarazonych wirusem w poszczególnych województwach jest proporcjonalna do populacji tych województw.</b>
 
-```{r, fig.width=12,fig.height=8}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-# df_pzu <- read.csv('data/end_of_day_PZU.csv')
-# names(df_pzu) <- c('ticker', 'date', 'open', 'high', 'low', 'close', 'vol')
-# df_pzu$date <- as.Date.character(df_pzu$date, format = '%Y%m%d')
-# df_pzu$open_ch <- with(df_pzu, c(NA, 100 * diff(open)/open[1:length(open) -1]))
-# df_pzu <- df_pzu[with(df_pzu, order(date)), ]
-# 
-# ggplot(data=df_pzu, aes(x = date, y = open_ch)) +
-#   geom_line(color = "blue", size = 1) +
-#   labs(title = "Zmiana kursu otwarcia PZU", x = "Data", y = "Zmiana[%]") +
-#   scale_x_date(date_breaks = "months" , date_labels = "%b-%Y") +
-#   theme(
-#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-#     axis.title=element_text(size=18),
-#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-#     axis.text=element_text(size=16),
-#     axis.text.x=element_text(angle = 90)
-#   )
+```{r}
 
+df = z1Data[,c(1,3)];
+df[,2] = 1000 * df[,2]/z1Data[,2];
+ggplot(data=df, aes(x=wojewodztwo,y=zachorowan)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Liczba zachorowań na 1000 osób") +
+  theme(axis.text.x = element_text(angle = 90))
 ```
 
-```{r, fig.width=12,fig.height=8}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-# df_lccorp <- read.csv('data/end_of_day_LCCORP.csv')
-# names(df_lccorp) <- c('ticker', 'date', 'open', 'high', 'low', 'close', 'vol')
-# df_lccorp$date <- as.Date.character(df_lccorp$date, format = '%Y%m%d')
-# df_lccorp$open_ch <- with(df_lccorp, c(NA, 100 * diff(open)/open[1:length(open) -1]))
-# df_lccorp <- df_lccorp[with(df_lccorp, order(date)), ]
-# 
-# ggplot(data=df_lccorp, aes(x = date, y = open_ch)) +
-#   geom_line(color = "blue", size = 1) +
-#   labs(title = "Zmiana kursu otwarcia LCCORP (DVL)", x = "Data", y = "Zmiana[%]") +
-#   scale_x_date(date_breaks = "months" , date_labels = "%b-%Y") +
-#   theme(
-#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-#     axis.title=element_text(size=18),
-#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-#     axis.text=element_text(size=16),
-#     axis.text.x=element_text(angle = 90)
-#   )
+```{r}
+h0 = "ilość zakażonych nie jest proporcjonalna do populacji województwa";
+h1 = "ilość zakażonych jest proporcjonalna do populacji województwa";
 ```
+
+Hipoteza zerowa: `r h0`  
+Hipoteza alternatywna: `r h1`
+
+```{r}
+alpha = 0.05;
+df = z1Data[c(2,3)];
+df[1] = df[1] - df[2]
+chisq = chisq.test(df);
+p = chisq$p.value;
+if(p > alpha){
+  output = paste("Wartość p jest większa od alfy, więc hipoteza zerowa, że ", h0, ", została odrzucona. Przyjmujemy jako prawdziwą hipoteze alternatywną: ", h1, ".");
+}else {
+  output = paste("Wartość p jest mniejsza od alfy, więc hipoteza zerowa, że ", h0, ", została potwierdzona.");
+}
+```
+
+Wartosc alfa jest rowna `r alpha`  
+Wartość p jest równa `r p`  
+`r output`
+
+```{r}
+pairs = apply(z1Data, 2, combn, m=2);
+pValues = list();
+
+for(i in 1:nrow(pairs)){
+  if(i%%2 == 1){
+    df = data.frame(pairs[c(i,(i+1)), c(2:3)]);
+    df[, c(1:2)] <- sapply(df[, c(1:2)], as.numeric)
+    df[1] = df[1] - df[2];
+    p = chisq.test(df)$p.value;
+    pValues = append(pValues, p);
+  }
+}
+output1 = ""
+output2 = ""
+pValues = p.adjust(pValues, method = "bonferroni")
+for(i in 1:length(pValues)){
+  if(pValues[i] < alpha){
+    output1 = paste(output1, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+  }else{
+    output2 = paste(output2, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+  }
+}
+```
+Istotne różnice zostały znalezione dla następujących województw:  
+`r output1`
+Nie znaleziono istotnych różnic dla następujących województw:  
+`r output2`
+
 
 <b>b) Sprawdz, czy skutecznosc leczenia osób zarazonych wirusem SARS-CoV-2 jest taka sama na terenie całej
 Polski, tzn. czy liczba przypadków smiertelnych jest proporcjonalna do liczby osób zarazonych przy podziale
 na województwa.</b>
-```{r, fig.width=10,fig.height=10, warning=FALSE}
-# #zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-# ggplot(data=df_pzu, aes(x = open_ch)) +
-#   geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
-#   labs(title = "Histogram zmian kursu PZU", x = "Zmiana[%]", y = "Częstość występowania") +
-#   scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
-#   theme(
-#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-#     axis.title=element_text(size=18),
-#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-#     axis.text=element_text(size=16)
-#   )
-# 
-# ggplot(data=df_pzu, aes(y = open_ch)) +
-#   geom_boxplot(color = "black", fill = "green", outlier.colour="red", outlier.shape=8, outlier.size=4) +
-#   labs(title = "Wykres pudełkowy zmian kursu PZU", x = "", y = "Zmiana[%]") +
-#   scale_y_continuous(breaks = seq(-20, 15, by = 5)) +
-#   theme(
-#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-#     axis.title=element_text(size=18),
-#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-#     axis.text=element_text(size=16)
-#   )
+
+```{r}
+df = z1Data[,c(1,4)];
+df[,2] = 1000 * df[,2]/z1Data[,2];
+ggplot(data=df, aes(x=wojewodztwo,y= zgony)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Liczba zgonów na 1000 chorych") +
+  theme(axis.text.x = element_text(angle = 90))
 ```
 
-```{r, fig.width=10,fig.height=10, warning=FALSE}
-#zostawiam kod z projektu 1, coś (zwłaszcza jak pisać te ggplot'y) może się przydać
-# ggplot(data=df_lccorp, aes(x = open_ch)) +
-#   geom_histogram(aes(y = stat(count / sum(count))), binwidth = 1, color = "black", fill = "green") +
-#   labs(title = "Histogram zmian kursu LCCORP (DVL)", x = "Zmiana[%]", y = "Częstość występowania") +
-#   scale_x_continuous(breaks = seq(-20, 15, by = 5)) +
-#   theme(
-#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-#     axis.title=element_text(size=18),
-#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-#     axis.text=element_text(size=16)
-#   )
-# 
-# ggplot(data=df_lccorp, aes(y = open_ch)) +
-#   geom_boxplot(color = "black", fill = "green", outlier.colour="red", outlier.shape=8, outlier.size=4) +
-#   labs(title = "Wykres pudełkowy zmian kursu LCCORP (DVL)", x = "", y = "Zmiana[%]") +
-#   scale_y_continuous(breaks = seq(-20, 15, by = 5)) +
-#   theme(
-#     plot.title = element_text(size = 20, face = "bold", hjust = 0.5,margin = margin(t = 40, r = 0, b = 20, l = 0)),
-#     axis.title=element_text(size=18),
-#     axis.title.y=element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
-#     axis.title.x=element_text(margin = margin(t = 20, r = 0, b = 40, l = 0)),
-#     axis.text=element_text(size=16)
-#   )
+```{r}
+h0 = "ilość przypadków śmiertelnych nie jest proporcjonalna do ilości osób zakażonych w województwie";
+h1 = "ilość przypadków śmiertelnych jest proporcjonalna do ilości osób zakażonych w województwie";
 ```
 
+Hipoteza zerowa: `r h0`  
+Hipoteza alternatywna: `r h1`
+
+```{r}
+alpha = 0.05;
+df = z1Data[c(3,4)];
+df[1] = df[1] - df[2];
+chisq = chisq.test(df);
+p = chisq$p.value;
+if(p > alpha){
+  output = paste("Wartość p jest większa od alfy, więc hipoteza zerowa, że ", h0, ", została odrzucona. Przyjmujemy jako prawdziwą hipoteze alternatywną: ", h1, ".");
+}else {
+  output = paste("Wartość p jest mniejsza od alfy, więc hipoteza zerowa, że ", h0, ", została potwierdzona.");
+}
+```
+
+Wartosc alfa jest rowna `r alpha`  
+Wartość p jest równa `r p`  
+`r output`
+
+
+```{r}
+pairs = apply(z1Data, 2, combn, m=2);
+pValues = list();
+
+for(i in 1:nrow(pairs)){
+  if(i%%2 == 1){
+    df = data.frame(pairs[c(i,(i+1)), c(3:4)]);
+    df[, c(1:2)] <- sapply(df[, c(1:2)], as.numeric)
+    df[1] = df[1] - df[2];
+    p = chisq.test(df)$p.value;
+    pValues = append(pValues, p);
+  }
+}
+output1 = ""
+output2 = ""
+pValues = p.adjust(pValues, method = "bonferroni")
+for(i in 1:length(pValues)){
+  if(pValues[i] < alpha){
+    output1 = paste(output1, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+  }else{
+    output2 = paste(output2, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+  }
+}
+```
+Istotne różnice zostały znalezione dla następujących województw:  
+`r output1`
+Nie znaleziono istotnych różnic dla następujących województw:  
+`r output2`
+  
+  
+  
+  
 <b>2. Sprawdz teze mówiaca o tym, ze tzw. atut własnego boiska w ligowym meczu piłkarskim
 nie zalezy od kraju, w którym tocza sie dane rozgrywki ligowe. W tym celu, zweryfikuj hipoteze o niezaleznosci
 wyniku meczu, rozumianego jako zwyciestwo, porazke lub remis gospodarzy, od kraju rozgrywek.
@@ -161,7 +198,8 @@ Wczytanie danych:
 fc_data <- data.frame(Name = c("Primeria_Liga", "Ekstrakalasa", "Primera_Division", "Premier_League"),
                  Win= c(104, 108,194,109),
                  Draw=c(68, 65, 95,69),
-                 Lost=c(68,67,91,62))
+                 Lost=c(68,67,91,62));
+
 fc_data
 ```
 
@@ -170,27 +208,17 @@ Wykresy obrazujące wygrane, remisy i porażki gospodarzy w poszczególnych liga
 ```{r, fig.width=10,fig.height=10, warning=FALSE}
 library(ggplot2)
 
-ggplot(data=fc_data, aes(x=Name,y= Win)) +
-  geom_bar(stat = "identity") +
-  ggtitle("Number of hosts winning matches in leagues") +
-  xlab("Legue name") +
-  ylab("Host winning matches") +
-  ylim(0, 200)
+df = cbind(fc_data[1], fc_data[,2:4]/rowSums(fc_data[2:4]));
 
-ggplot(data=fc_data, aes(x=Name,y= Draw)) +
-  geom_bar(stat = "identity") +
-  ggtitle("Number of draw matches in leagues") +
-  xlab("Legue name") +
-  ylab("Draw matches")+
-  ylim(0, 200)
+df <- data.frame(teams=rep(df[0],14), 
+       melt(df, id.vars=c("Name")))
 
-ggplot(data=fc_data, aes(x=Name,y= Lost)) +
-  geom_bar(stat = "identity") +
-  ggtitle("Number of hosts lost matches in leagues") +
+ggplot(data=df, aes(x=Name,y=value,fill=as.factor(variable))) + 
+  geom_bar(position="fill",stat="identity") +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) +
   xlab("Legue name") +
-  ylab("Lost matches") +
-  ylim(0, 200)
-  
+  ylab("percentages") +
+  scale_fill_discrete(name = "host outcome")
 ```
 
 Wartość krytyczna $c$ będzie wyznaczana następującym wzorem:
