@@ -19,25 +19,26 @@ pre {
 </style>
 
 <p>Do zadania 1 przydzielonymi naszemu zespołowi są województwa: swietokrzyskie, zachodnio-pomorskie, podlaskie, mazowieckie, wielkopolskie, warminsko-mazurskie i malopolskie.
-Do zadania 1 przydzielonymi naszemu zespołowi są ligi: Primeira Liga (Liga portugalska), Ekstraklasa (Liga polska), Primera Division (Liga hiszpańska) i Premier League (Liga rosyjska).</p>
+Do zadania 2 przydzielonymi naszemu zespołowi są ligi: Primeira Liga (Liga portugalska), Ekstraklasa (Liga polska), Primera Division (Liga hiszpańska) i Premier League (Liga rosyjska).</p>
 
 ```{r}
+options(warn=-1)
 library(ggplot2, scales)
 library(reshape)
-options(warn=-1)
 ```
 
 <b>Zadanie 1.</b> Korzystajac z danych dostepnych w internecie:
+
+Liczba zgonów i zachorowań została pobrana w dniu 11.01.21 ze strony https://koronawirus-w-polsce.pl/, liczby populacji województw zostały pobrane z http://www.gminy.pl/Rank/W/Rank_W_L.html
 ```{r}
 z1Data = read.csv("data/z1Data.csv");
+z1Data
 ```
-
-<b>c) W kazdym z poniższych przypadków wskaz ewentualnie, które województwa istotnie sie od siebie róznia
-pod katem rozwazanych statystyk.</b>
 
 <b>a) Sprawdz, czy wirus SARS-CoV-2 równomiernie rozprzestrzenił sie na terenie Polski, tzn. czy liczba osób
 zarazonych wirusem w poszczególnych województwach jest proporcjonalna do populacji tych województw.</b>
 
+# Wizualizacja testowanych zależności
 ```{r}
 
 df = z1Data[,c(1,3)];
@@ -48,31 +49,28 @@ ggplot(data=df, aes(x=wojewodztwo,y=zachorowan)) +
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-```{r}
-h0 = "ilość zakażonych nie jest proporcjonalna do populacji województwa";
-h1 = "ilość zakażonych jest proporcjonalna do populacji województwa";
-```
+# Hipoteza
+Hipoteza zerowa $$H0:\ _"Ilość\ zakażonych\ nie\ jest\ proporcjonalna\ do\ populacji\ województwa."$$
+Hipoteza alternatywna $$H1:\ _"Ilość\ zakażonych\ jest\ proporcjonalna\ do\ populacji\ województwa"$$
 
-Hipoteza zerowa: `r h0`  
-Hipoteza alternatywna: `r h1`
-
+# Obliczenie p-wartość
 ```{r}
 alpha = 0.05;
 df = z1Data[c(2,3)];
 df[1] = df[1] - df[2]
 chisq = chisq.test(df);
 p = chisq$p.value;
-if(p > alpha){
-  output = paste("Wartość p jest większa od alfy, więc hipoteza zerowa, że ", h0, ", została odrzucona. Przyjmujemy jako prawdziwą hipoteze alternatywną: ", h1, ".");
-}else {
-  output = paste("Wartość p jest mniejsza od alfy, więc hipoteza zerowa, że ", h0, ", została potwierdzona.");
-}
 ```
+P-wartość jest równa `r p`
 
-Wartosc alfa jest rowna `r alpha`  
-Wartość p jest równa `r p`  
-`r output`
+# Wnioski
+P-wartość jest równa `r p` i jest ona mniejsza od alfy równej `r alpha` tak więc hipoteza zerowa, że ilość zakażonych nie jest proporcjonalna do populacji województwa, zostaje odrzucona. Przyjmujemy jako prawdziwą hipoteze alternatywną: ilość zakażonych jest proporcjonalna do populacji województwa.
 
+<b>c) W kazdym z poniższych przypadków wskaz ewentualnie, które województwa istotnie sie od siebie róznia
+pod katem rozwazanych statystyk.</b>
+
+# Obliczenia
+Stowrzenie zestawów par województw i obliczenie p-wartości dla każdej pary
 ```{r}
 pairs = apply(z1Data, 2, combn, m=2);
 pValues = list();
@@ -86,27 +84,40 @@ for(i in 1:nrow(pairs)){
     pValues = append(pValues, p);
   }
 }
+```
+
+Zastosowanie korekty Bonferroni'ego
+```{r}
+pValues = p.adjust(pValues, method = "bonferroni")
+```
+
+Zebranie wyników w zestawy gdzie p-wartość jest większa/mniejsza od wartosci alfa
+```{r}
 output1 = ""
 output2 = ""
-pValues = p.adjust(pValues, method = "bonferroni")
+
 for(i in 1:length(pValues)){
-  if(pValues[i] < alpha){
-    output1 = paste(output1, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+  if(pValues[i] > alpha){
+    output1 = paste(output1, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], "  \n  \n")
+
   }else{
-    output2 = paste(output2, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+    output2 = paste(output2, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], "  \n  \n")
   }
 }
 ```
-Istotne różnice zostały znalezione dla następujących województw:  
+# Wnioski
+<b>Ze względu na p-wartość większą od alfy, nie znaleziono istotnych różnic dla następujących województw</b>:  
 `r output1`
-Nie znaleziono istotnych różnic dla następujących województw:  
-`r output2`
+  
 
+<b>Ze względu na p-wartość mniejsza od alfy, istotne różnice zostały znalezione dla następujących województw</b>:  
+`r output2`
 
 <b>b) Sprawdz, czy skutecznosc leczenia osób zarazonych wirusem SARS-CoV-2 jest taka sama na terenie całej
 Polski, tzn. czy liczba przypadków smiertelnych jest proporcjonalna do liczby osób zarazonych przy podziale
 na województwa.</b>
 
+# Wizualizacja testowanych zależności
 ```{r}
 df = z1Data[,c(1,4)];
 df[,2] = 1000 * df[,2]/z1Data[,2];
@@ -116,32 +127,28 @@ ggplot(data=df, aes(x=wojewodztwo,y= zgony)) +
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-```{r}
-h0 = "ilość przypadków śmiertelnych nie jest proporcjonalna do ilości osób zakażonych w województwie";
-h1 = "ilość przypadków śmiertelnych jest proporcjonalna do ilości osób zakażonych w województwie";
-```
+# Hipoteza
+Hipoteza zerowa $$H0:\ _"Ilość\ przypadków\ śmiertlnych\ nie\ jest\ proporcjonalna\ do\ ilości\ osób\ zakażonych\ w\ województwie."$$
+Hipoteza alternatywna $$H1:\ _"Ilość\ przypadków\ śmiertlnych\ jest\ proporcjonalna\ do\ ilości\ osób\ zakażonych\ w\ województwie."$$
 
-Hipoteza zerowa: `r h0`  
-Hipoteza alternatywna: `r h1`
-
+# Obliczenie p-wartości
 ```{r}
 alpha = 0.05;
 df = z1Data[c(3,4)];
 df[1] = df[1] - df[2];
-chisq = chisq.test(df);
+chisq = chisq.test(t(df));
 p = chisq$p.value;
-if(p > alpha){
-  output = paste("Wartość p jest większa od alfy, więc hipoteza zerowa, że ", h0, ", została odrzucona. Przyjmujemy jako prawdziwą hipoteze alternatywną: ", h1, ".");
-}else {
-  output = paste("Wartość p jest mniejsza od alfy, więc hipoteza zerowa, że ", h0, ", została potwierdzona.");
-}
 ```
+P-wartość jest równa `r p`
 
-Wartosc alfa jest rowna `r alpha`  
-Wartość p jest równa `r p`  
-`r output`
+# Wnioski
+P-wartość jest równa `r p` i jest ona mniejsza od alfy równej `r alpha` tak więc hipoteza zerowa, że ilość przypadków śmiertelnych nie jest proporcjonalna do ilości przypadków śmiertelnych w województwie, zostaje odrzucona. Przyjmujemy jako prawdziwą hipoteze alternatywną: ilość przypadków śmiertelnych jest proporcjonalna do ilości przypadków śmiertelnych w województwie.
 
+<b>c) W kazdym z poniższych przypadków wskaz ewentualnie, które województwa istotnie sie od siebie róznia
+pod katem rozwazanych statystyk.</b>
 
+# Obliczenia
+Stowrzenie zestawów par województw i obliczenie p-wartości dla każdej pary
 ```{r}
 pairs = apply(z1Data, 2, combn, m=2);
 pValues = list();
@@ -151,29 +158,41 @@ for(i in 1:nrow(pairs)){
     df = data.frame(pairs[c(i,(i+1)), c(3:4)]);
     df[, c(1:2)] <- sapply(df[, c(1:2)], as.numeric)
     df[1] = df[1] - df[2];
-    p = chisq.test(df)$p.value;
+    p = chisq.test((df))$p.value;
     pValues = append(pValues, p);
   }
 }
+```
+
+Zastosowanie korekty Bonferroni'ego
+```{r}
+pValues = p.adjust(pValues, method = "bonferroni")
+```
+
+Zebranie wyników w zestawy gdzie p-wartość jest większa/mniejsza od wartosci alfa
+```{r}
 output1 = ""
 output2 = ""
-pValues = p.adjust(pValues, method = "bonferroni")
+
 for(i in 1:length(pValues)){
-  if(pValues[i] < alpha){
-    output1 = paste(output1, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+  if(pValues[i] > alpha){
+    output1 = paste(output1, pairs[2*i-1,1], " i ", pairs[2*i,1], "z p-wartością równą ", pValues[i], "  \n  \n")
+
   }else{
-    output2 = paste(output2, pairs[2*i-1,1], " i ", pairs[2*i,1], "z wartością p równą ", pValues[i], ",  \n")
+    output2 = paste(output2, pairs[2*i-1,1], " i ", pairs[2*i,1], "z p-wartością równą ", pValues[i], "  \n  \n")
   }
 }
 ```
-Istotne różnice zostały znalezione dla następujących województw:  
+
+# Wnioski
+<b>Ze względu na p-wartość większą od alfy, nie znaleziono istotnych różnic dla następujących województw:</b>  
 `r output1`
-Nie znaleziono istotnych różnic dla następujących województw:  
+  
+  
+<b>Ze względu na p-wartość mniejsza od alfy, istotne różnice zostały znalezione dla następujących województw:</b>  
 `r output2`
   
-  
-  
-  
+
 <b>2. Sprawdz teze mówiaca o tym, ze tzw. atut własnego boiska w ligowym meczu piłkarskim
 nie zalezy od kraju, w którym tocza sie dane rozgrywki ligowe. W tym celu, zweryfikuj hipoteze o niezaleznosci
 wyniku meczu, rozumianego jako zwyciestwo, porazke lub remis gospodarzy, od kraju rozgrywek.
@@ -185,11 +204,13 @@ Przeprowadz wnioskowanie porównujac wartosc otrzymanej statystyki testowej z wa
 Czy obliczona p-wartosc potwierdza wynik wnioskowania?
 Sprawdz uzyskane wyniki wykorzystujac funkcje chisq.test.</b>
 
+# Hipoteza
 Hipoteza zerowa $$H0:\ _"Atut\ własnego\ boiska\ jest\ niezależny\ od\ ligi\ rozgrywkowej."$$
 Hipoteza alternatywna $$H1:\ _"Atut\ własnego\ boiska\ jest\ zależny\ od\ ligi\ rozgrywkowej."$$
 
 Hipoteza będzie sprawdzana testem $\chi^{2}$.
 
+# Dane
 Dane zostały zebrane z strony https://pl.fcstats.com.
 
 Wczytanie danych:
@@ -203,7 +224,7 @@ fc_data <- data.frame(Name = c("Primeria_Liga", "Ekstrakalasa", "Primera_Divisio
 fc_data
 ```
 
-Wykresy obrazujące wygrane, remisy i porażki gospodarzy w poszczególnych ligach:
+Wykres obrazujący wygrane, remisy i porażki gospodarzy w poszczególnych ligach:
 
 ```{r, fig.width=10,fig.height=10, warning=FALSE}
 library(ggplot2)
@@ -221,6 +242,7 @@ ggplot(data=df, aes(x=Name,y=value,fill=as.factor(variable))) +
   scale_fill_discrete(name = "host outcome")
 ```
 
+# Obliczenia
 Wartość krytyczna $c$ będzie wyznaczana następującym wzorem:
 $$ c = F^{-1}_{\chi^{2}_{(n-1)(m-1)}}(1-\alpha)$$
 Gdzie $n$, $m$ oznacza liczbę stopni swobody kolejno w wierszach i kolumnach.
@@ -238,6 +260,7 @@ alpha <- 0.05
 c <- qchisq(p=alpha, df=chi_freedom_degrees, lower.tail=FALSE)
 ```
 $$ c = F^{-1}_{\chi^{2}_{6}}(1-0,05) = `r c` $$
+
 Następnie obliczam wartość $\chi^{2}$:
 ```{r}
 col_sum <- matrix(colSums(fc_data[,2:4]))
@@ -250,7 +273,6 @@ chisq <- sum((stat - fc_data[,2:4]) * (stat - fc_data[,2:4])/stat)
 Wartość $\chi^{2}$ jest równa:
 $$\chi^{2} = `r chisq`$$
 
-Jest ona mniejsza niż wartość krytyczna, nie można więc odrzucić hipotezy zerowej.
 
 Wyliczam p-wartość:
 ```{r}
@@ -260,7 +282,9 @@ p_val <- pchisq(chisq, df=chi_freedom_degrees, lower.tail=FALSE)
 P-wartość wynosi:
 $$p = `r p_val`$$
 
-Jest ona większa niż poziom istotności $\alpha = 0.05$. Potwierdza to, że nie można odrzucić hipotezy zerowej.
+## Wnioski
+Wartość $\chi^{2} = `r chisq`$ jest mniejsza niż wartość krytyczna, nie można więc odrzucić hipotezy zerowej.  
+Wartość $p = `r p_val`$ jest większa niż poziom istotności $\alpha = 0.05$. Potwierdza to, że nie można odrzucić hipotezy zerowej.
 
 Uzyskane wyniki zostają sprawdzone z funkcją $chisq.test$.
 ```{r}
