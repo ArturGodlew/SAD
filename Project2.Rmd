@@ -57,7 +57,6 @@ Hipoteza alternatywna $$H1:\ _"Ilość\ zakażonych\ jest\ proporcjonalna\ do\ p
 ```{r}
 alpha = 0.05;
 df = z1Data[c(2,3)];
-df[1] = df[1] - df[2]
 chisq = chisq.test(df);
 p = chisq$p.value;
 ```
@@ -79,7 +78,6 @@ for(i in 1:nrow(pairs)){
   if(i%%2 == 1){
     df = data.frame(pairs[c(i,(i+1)), c(2:3)]);
     df[, c(1:2)] <- sapply(df[, c(1:2)], as.numeric)
-    df[1] = df[1] - df[2];
     p = chisq.test(df)$p.value;
     pValues = append(pValues, p);
   }
@@ -106,11 +104,11 @@ for(i in 1:length(pValues)){
 }
 ```
 # Wnioski
-<b>Ze względu na p-wartość większą od alfy, nie znaleziono istotnych różnic dla następujących województw</b>:  
+<b>Nie znaleziono istotnych różnic dla następujących województw</b>:  
 `r output1`
   
 
-<b>Ze względu na p-wartość mniejsza od alfy, istotne różnice zostały znalezione dla następujących województw</b>:  
+<b>Istotne różnice zostały znalezione dla następujących województw</b>:  
 `r output2`
 
 <b>b) Sprawdz, czy skutecznosc leczenia osób zarazonych wirusem SARS-CoV-2 jest taka sama na terenie całej
@@ -135,7 +133,6 @@ Hipoteza alternatywna $$H1:\ _"Ilość\ przypadków\ śmiertlnych\ jest\ proporc
 ```{r}
 alpha = 0.05;
 df = z1Data[c(3,4)];
-df[1] = df[1] - df[2];
 chisq = chisq.test(t(df));
 p = chisq$p.value;
 ```
@@ -157,7 +154,6 @@ for(i in 1:nrow(pairs)){
   if(i%%2 == 1){
     df = data.frame(pairs[c(i,(i+1)), c(3:4)]);
     df[, c(1:2)] <- sapply(df[, c(1:2)], as.numeric)
-    df[1] = df[1] - df[2];
     p = chisq.test((df))$p.value;
     pValues = append(pValues, p);
   }
@@ -185,11 +181,11 @@ for(i in 1:length(pValues)){
 ```
 
 # Wnioski
-<b>Ze względu na p-wartość większą od alfy, nie znaleziono istotnych różnic dla następujących województw:</b>  
+<b>Nie znaleziono istotnych różnic dla następujących województw:</b>  
 `r output1`
   
   
-<b>Ze względu na p-wartość mniejsza od alfy, istotne różnice zostały znalezione dla następujących województw:</b>  
+<b>Istotne różnice zostały znalezione dla następujących województw:</b>  
 `r output2`
   
 
